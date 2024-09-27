@@ -153,7 +153,7 @@ export const Details = () => {
         </div>
 
         {/* Tab Navigation */}
-        (
+   
         <div className="inline-flex items-center gap-2 md:gap-[60px] mt-8 flex-wrap justify-center md:justify-start">
           <div
             className={`font-medium text-base md:text-lg lg:text-xl cursor-pointer [font-family:'Mohave',Helvetica] ${activeSection === 'overview'
@@ -253,7 +253,7 @@ export const Details = () => {
           </div>
         </div>
 
-        );
+        
 
         {/* Divider Section */}
         <div className="mt-3">
