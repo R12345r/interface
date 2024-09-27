@@ -1,0 +1,16 @@
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .all-\[unset\] {
+    all: unset;
+  }
+}
+
+:root {
+  --heading-1: rgba(46, 58, 98, 1);
+  --line: rgba(202, 202, 202, 1);
+  --primary-1: rgba(40, 48, 76, 1);
+  --secondary-2: rgba(248, 205, 140, 1);
+  --smallfont: rgba(90, 90, 90, 1);
+}
