@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 
 
-
 export const Details = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('overview');
+  const [openFaq, setOpenFaq] = useState(null);
   // References to each section
   const overviewRef = useRef(null);
   const highlightsRef = useRef(null);
@@ -13,29 +13,95 @@ export const Details = () => {
   const reviewsRef = useRef(null);
   const gallerysRef = useRef(null);
   const locationRef = useRef(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const faqsRef = useRef(null);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen); // Toggle the dropdown on click
+  };
+  const rooms = [
+    "https://c.animaapp.com/s3bftybd/img/rectangle-7@2x.png",
+    "https://c.animaapp.com/s3bftybd/img/rectangle-55@2x.png",
+    "https://c.animaapp.com/s3bftybd/img/rectangle-56@2x.png",
+    "https://c.animaapp.com/s3bftybd/img/rectangle-7@2x.png",
+    "https://c.animaapp.com/s3bftybd/img/rectangle-55@2x.png",
+    "https://c.animaapp.com/s3bftybd/img/rectangle-56@2x.png"
+  ];
+
+  const slidesToShow = 3; // Number of images to show
+  const totalSlides = rooms.length - slidesToShow;
+
+  const handlePrevClicke = () => {
+    // Move left (show previous group of images)
+    setCurrentSlide((prevIndex) => (prevIndex === 0 ? totalSlides : prevIndex - 1));
+  };
+
+  const handleNextClickt = () => {
+    // Move right (show next group of images)
+    setCurrentSlide((prevIndex) => (prevIndex === totalSlides ? 0 : prevIndex + 1));
+  };
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
+  const toggleFaq = (faqIndex) => {
+    // Toggle the selected FAQ based on its index
+    setOpenFaq(openFaq === faqIndex ? null : faqIndex);
+  };
   useEffect(() => {
     if (menuOpen) {
       setMenuOpen(false); // Close the menu if it was open
     }
   }, []);
-
+  const toggleGallery = () => {
+    setIsGalleryOpen(!isGalleryOpen);
+  };
   const scrollToSection = (ref) => {
- 
+
     if (ref && ref.current) {
-    
+
       const sectionTop = ref.current.getBoundingClientRect().top + window.scrollY;
-    
+
       window.scrollTo({
-        top: sectionTop - 72, 
+        top: sectionTop - 72,
         behavior: 'smooth',
       });
     }
+  };
+  const reviews = [
+    {
+      name: 'Raghul. R',
+      date: '30.08.2024',
+      ratingImg: 'https://c.animaapp.com/s3bftybd/img/pngwing-com--1--1-1@2x.png',
+      reviewText: 'Lörem ipsum rent intraluna saskapet, har sor. Nin spen, nis prektig fade. Astrorade inaskad polyling edor är jugt.',
+    },
+    {
+      name: 'Sara J.',
+      date: '25.07.2024',
+      ratingImg: 'https://c.animaapp.com/s3bftybd/img/pngwing-com--1--1-1@2x.png',
+      reviewText: 'This is a fantastic product. I absolutely love it!',
+    },
+    {
+      name: 'John D.',
+      date: '14.06.2024',
+      ratingImg: 'https://c.animaapp.com/s3bftybd/img/pngwing-com--1--1-1@2x.png',
+      reviewText: 'Good quality and fast shipping. Will definitely recommend it.',
+    },
+  ];
+
+  // Function to go to the previous review
+  const handlePrevClick = () => {
+    setCurrentReviewIndex((prevIndex) => (prevIndex === 0 ? reviews.length - 1 : prevIndex - 1));
+  };
+
+  // Function to go to the next review
+  const handleNextClick = () => {
+    setCurrentReviewIndex((prevIndex) => (prevIndex === reviews.length - 1 ? 0 : prevIndex + 1));
   };
 
 
@@ -70,9 +136,23 @@ export const Details = () => {
               </svg>
             </button>
           </div>
-          <div className="hidden md:inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg cursor-pointer " >
-            <span className="font-medium text-primary-1 text-base text-center tracking-[1.60px] [font-family:'Mohave',Helvetica]">HI, GUEST</span>
-            <img className="w-[13.12px] h-[9.6px]" alt="Dropdown Icon" src="https://c.animaapp.com/s3bftybd/img/vector-1.svg" />
+          <div className="hidden md:inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg cursor-pointer" onClick={toggleDropdown}>
+            <span className="font-medium text-primary-1 text-base text-center tracking-[1.60px]">HI, GUEST</span>
+        
+            <img
+              className={`w-[13.12px] h-[9.6px] transition-transform duration-300 ${dropdownOpen ? 'rotate-180' : 'rotate-0'}`} // Conditional rotation
+              alt="Dropdown Icon"
+              src="https://c.animaapp.com/s3bftybd/img/vector-1.svg"
+            />
+            {dropdownOpen && (
+              <div className="absolute top-12 w-[200px] bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+                <div className="flex flex-col py-2">
+                  <span className="px-4 py-2 text-gray-800 cursor-pointer hover:bg-gray-200">Profile</span>
+                  <span className="px-4 py-2 text-gray-800 cursor-pointer hover:bg-gray-200">Settings</span>
+                  <span className="px-4 py-2 text-gray-800 cursor-pointer hover:bg-gray-200">Logout</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -118,47 +198,100 @@ export const Details = () => {
         {/* Main Image and Photo Gallery Section */}
 
         {/* Main Image and Photo Gallery Section */}
-        <div ref={gallerysRef} className="relative w-full h-auto md:h-[460px] lg:h-[632px] mx-auto mt-8">
-          <img
-            className="w-full h-auto object-cover"
-            alt="Black Forest"
-            src="https://c.animaapp.com/s3bftybd/img/rectangle-49.svg"
-          />
-          <div className="absolute bottom-4 left-4 md:left-auto md:right-4 lg:right-4 bg-black bg-opacity-50 text-white py-1 px-3 rounded-md font-bold text-xs md:text-sm lg:text-lg tracking-wide">
-            20+ Photos
+        <div className=" min-h-screen-75 flex flex-col bg-white">
+          {/* Main Image and Photo Gallery Section */}
+          <div ref={gallerysRef} className="relative w-full h-auto md:h-[460px] lg:h-[632px] mx-auto mt-8">
+            <img
+              className="w-full h-auto object-cover"
+              alt="Black Forest"
+              src="https://c.animaapp.com/s3bftybd/img/rectangle-49.svg"
+            />
+            <div
+              onClick={toggleGallery}
+              className="cursor-pointer absolute bottom-4 left-4 md:left-auto md:right-4 lg:right-4 bg-black bg-opacity-50 text-white py-1 px-3 rounded-md font-bold text-xs md:text-sm lg:text-lg tracking-wide"
+            >
+              20+ Photos
+            </div>
+            {/* Thumbnail Gallery */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full mt-3">
+              <img
+                className="w-full h-32 md:h-40 object-cover"
+                alt="Black Forest"
+                src="https://c.animaapp.com/s3bftybd/img/rectangle-50.svg"
+              />
+              <img
+                className="w-full h-32 md:h-40 object-cover"
+                alt="Black Forest"
+                src="https://c.animaapp.com/s3bftybd/img/rectangle-51.svg"
+              />
+              <img
+                className="w-full h-32 md:h-40 object-cover"
+                alt="Black Forest"
+                src="https://c.animaapp.com/s3bftybd/img/rectangle-52.svg"
+              />
+              <img
+                className="w-full h-32 md:h-[168px] object-cover"
+                alt="Black Forest"
+                src="https://c.animaapp.com/s3bftybd/img/rectangle-53@2x.png"
+              />
+            </div>
           </div>
-          {/* Thumbnail Gallery */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full mt-3">
-            <img
-              className="w-full h-32 md:h-40 object-cover"
-              alt="Black Forest"
-              src="https://c.animaapp.com/s3bftybd/img/rectangle-50.svg"
-            />
-            <img
-              className="w-full h-32 md:h-40 object-cover"
-              alt="Black Forest"
-              src="https://c.animaapp.com/s3bftybd/img/rectangle-51.svg"
-            />
-            <img
-              className="w-full h-32 md:h-40 object-cover"
-              alt="Black Forest"
-              src="https://c.animaapp.com/s3bftybd/img/rectangle-52.svg"
-            />
-            <img
-              className="w-full h-32 md:h-[168px] object-cover"
-              alt="Black Forest"
-              src="https://c.animaapp.com/s3bftybd/img/rectangle-53@2x.png"
-            />
-          </div>
+
+          {/* Gallery Modal */}
+          {isGalleryOpen && (
+            <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+              <div className="relative w-full max-w-6xl p-5 md:p-8">
+                <button
+                  onClick={toggleGallery}
+                  className="absolute top-4 right-4 text-white text-2xl font-bold"
+                >
+                  &times;
+                </button>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <img
+                    className="w-full h-auto object-cover"
+                    alt="Black Forest"
+                    src="https://c.animaapp.com/s3bftybd/img/rectangle-49.svg"
+                  />
+                  <img
+                    className="w-full h-auto object-cover"
+                    alt="Black Forest"
+                    src="https://c.animaapp.com/s3bftybd/img/rectangle-50.svg"
+                  />
+                  <img
+                    className="w-full h-auto object-cover"
+                    alt="Black Forest"
+                    src="https://c.animaapp.com/s3bftybd/img/rectangle-51.svg"
+                  />
+                  <img
+                    className="w-full h-auto object-cover"
+                    alt="Black Forest"
+                    src="https://c.animaapp.com/s3bftybd/img/rectangle-52.svg"
+                  />
+                  <img
+                    className="w-full h-auto object-cover"
+                    alt="Black Forest"
+                    src="https://c.animaapp.com/s3bftybd/img/rectangle-53@2x.png"
+                  />
+                  <img
+                    className="w-full h-auto object-cover"
+                    alt="Black Forest"
+                    src="https://c.animaapp.com/s3bftybd/img/rectangle-49.svg"
+                  />
+                  {/* Add more images as needed */}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Tab Navigation */}
-   
+
         <div className="inline-flex items-center gap-2 md:gap-[60px] mt-8 flex-wrap justify-center md:justify-start">
           <div
             className={`font-medium text-base md:text-lg lg:text-xl cursor-pointer [font-family:'Mohave',Helvetica] ${activeSection === 'overview'
-                ? 'text-heading-1 underline custom-underline-offset'
-                : 'text-[#333333]'
+              ? 'text-heading-1 underline custom-underline-offset'
+              : 'text-[#333333]'
               }`}
             onClick={() => {
               scrollToSection(overviewRef);
@@ -169,8 +302,8 @@ export const Details = () => {
           </div>
           <div
             className={`font-medium text-base md:text-lg lg:text-xl cursor-pointer [font-family:'Mohave',Helvetica]${activeSection === 'highlights'
-                ? 'text-heading-1 underline custom-underline-offset'
-                : 'text-[#333333]'
+              ? 'text-heading-1 underline custom-underline-offset'
+              : 'text-[#333333]'
               }`}
             onClick={() => {
               scrollToSection(highlightsRef);
@@ -181,8 +314,8 @@ export const Details = () => {
           </div>
           <div
             className={`font-medium text-base md:text-lg lg:text-xl cursor-pointer [font-family:'Mohave',Helvetica]${activeSection === 'rooms'
-                ? 'text-heading-1 underline custom-underline-offset'
-                : 'text-[#333333]'
+              ? 'text-heading-1 underline custom-underline-offset'
+              : 'text-[#333333]'
               }`}
             onClick={() => {
               scrollToSection(roomsRef);
@@ -193,8 +326,8 @@ export const Details = () => {
           </div>
           <div
             className={`font-medium text-base md:text-lg lg:text-xl cursor-pointer [font-family:'Mohave',Helvetica] ${activeSection === 'amenities'
-                ? 'text-heading-1 underline custom-underline-offset'
-                : 'text-[#333333]'
+              ? 'text-heading-1 underline custom-underline-offset'
+              : 'text-[#333333]'
               }`}
             onClick={() => {
               scrollToSection(amenitiesRef);
@@ -205,8 +338,8 @@ export const Details = () => {
           </div>
           <div
             className={`font-medium text-base md:text-lg lg:text-xl cursor-pointer [font-family:'Mohave',Helvetica]  ${activeSection === 'reviews'
-                ? 'text-heading-1 underline custom-underline-offset'
-                : 'text-[#333333]'
+              ? 'text-heading-1 underline custom-underline-offset'
+              : 'text-[#333333]'
               }`}
             onClick={() => {
               scrollToSection(reviewsRef);
@@ -217,8 +350,8 @@ export const Details = () => {
           </div>
           <div
             className={`font-medium text-base md:text-lg lg:text-xl cursor-pointer [font-family:'Mohave',Helvetica]  ${activeSection === 'gallery'
-                ? 'text-heading-1 underline custom-underline-offset'
-                : 'text-[#333333]'
+              ? 'text-heading-1 underline custom-underline-offset'
+              : 'text-[#333333]'
               }`}
             onClick={() => {
               scrollToSection(gallerysRef);
@@ -229,8 +362,8 @@ export const Details = () => {
           </div>
           <div
             className={`font-medium text-base md:text-lg lg:text-xl cursor-pointer [font-family:'Mohave',Helvetica]  ${activeSection === 'location'
-                ? 'text-heading-1 underline custom-underline-offset'
-                : 'text-[#333333]'
+              ? 'text-heading-1 underline custom-underline-offset'
+              : 'text-[#333333]'
               }`}
             onClick={() => {
               scrollToSection(locationRef);
@@ -241,8 +374,8 @@ export const Details = () => {
           </div>
           <div
             className={`font-medium text-base md:text-lg lg:text-xl cursor-pointer [font-family:'Mohave',Helvetica]  ${activeSection === 'faqs'
-                ? 'text-heading-1 underline custom-underline-offset'
-                : 'text-[#333333]'
+              ? 'text-heading-1 underline custom-underline-offset'
+              : 'text-[#333333]'
               }`}
             onClick={() => {
               scrollToSection(faqsRef);
@@ -253,16 +386,16 @@ export const Details = () => {
           </div>
         </div>
 
-        
+
 
         {/* Divider Section */}
         <div className="mt-3">
           <img className="w-full" alt="Line" src="https://c.animaapp.com/s3bftybd/img/line-9.svg" />
         </div>
 
-      
+
         <div className="flex flex-col lg:flex-row justify-between items-start mt-8 gap-8">
-       
+
           <div ref={highlightsRef} className="flex-[2]">
             {/* Guest, Room, Bath, Meals Section */}
             <div className="inline-flex items-start gap-4 md:gap-8 flex-wrap [font-family:'Mohave',Helvetica]">
@@ -389,39 +522,88 @@ export const Details = () => {
         <div ref={roomsRef} className="flex flex-col w-full md:w-[760px] items-start gap-5 mt-0 [font-family:'Mohave',Helvetica]">
           <div className="self-stretch font-semibold text-heading-1 text-lg md:text-xl lg:text-2xl">Rooms</div>
           <div className="flex items-center justify-between w-full">
-            <img className="w-6 h-6 md:w-[26.67px] md:h-[26.67px]" alt="Frame" src="https://c.animaapp.com/s3bftybd/img/frame-295.svg" />
-            <div className="overflow-x-auto whitespace-nowrap flex gap-4">
-              <img className="w-[160px] md:w-[200px] h-[120px] md:h-[160px] lg:w-[260px] lg:h-[200px] object-cover" alt="Room Image 1" src="https://c.animaapp.com/s3bftybd/img/rectangle-7@2x.png" />
-              <img className="w-[160px] md:w-[200px] h-[120px] md:h-[160px] lg:w-[260px] lg:h-[200px] object-cover" alt="Room Image 2" src="https://c.animaapp.com/s3bftybd/img/rectangle-55@2x.png" />
-              <img className="w-[80px] md:w-[100px] h-[120px] md:h-[160px] lg:w-[136px] lg:h-[200px] object-cover" alt="Room Image 3" src="https://c.animaapp.com/s3bftybd/img/rectangle-56@2x.png" />
+            <img
+              className="w-6 h-6 md:w-[26.67px] md:h-[26.67px] cursor-pointer"
+              alt="Previous Frame"
+              src="https://c.animaapp.com/s3bftybd/img/frame-295.svg"
+              onClick={handlePrevClicke}
+            />
+            <div className="relative overflow-hidden w-full">
+              {/* Image Container */}
+              <div
+                className="flex transition-transform duration-500 ease-in-out"
+                style={{ transform: `translateX(-${currentSlide * (100 / slidesToShow)}%)` }} // Slide effect
+              >
+                {rooms.map((room, index) => (
+                  <img
+                    key={index}
+                    className="w-[160px] md:w-[200px] h-[120px] md:h-[160px] lg:w-[260px] lg:h-[200px] object-cover"
+                    alt={`Room Image ${index + 1}`}
+                    src={room}
+                  />
+                ))}
+              </div>
             </div>
-            <img className="w-6 h-6 md:w-[26.67px] md:h-[26.67px]" alt="Frame" src="https://c.animaapp.com/s3bftybd/img/frame-1.svg" />
+            <img
+              className="w-6 h-6 md:w-[26.67px] md:h-[26.67px] cursor-pointer"
+              alt="Next Frame"
+              src="https://c.animaapp.com/s3bftybd/img/frame-1.svg"
+              onClick={handleNextClickt}
+            />
           </div>
         </div>
 
         {/* Reviews Section */}
-        <div ref={reviewsRef} className="flex flex-col w-full md:w-[760px] items-start gap-5 mt-8 [font-family:'Mohave',Helvetica]">
-          <div className="self-stretch font-semibold text-heading-1 text-lg md:text-xl lg:text-2xl">Reviews</div>
-          <div className="flex items-center justify-between w-full">
-            <img className="w-6 h-6 md:w-[26.67px] md:h-[26.67px]" alt="Frame" src="https://c.animaapp.com/s3bftybd/img/frame-295-1.svg" />
-            <div className="flex flex-col w-full md:w-[460px] items-start gap-5">
-              <div className="flex items-center justify-between w-full">
-                <div className="inline-flex items-center gap-3">
-                  <div className="w-6 h-6 md:w-10 md:h-10 bg-[#ffdada] rounded-full" />
-                  <div className="flex flex-col items-start gap-[9px]">
-                    <div className="font-medium text-[#222222] text-sm md:text-base">Raghul. R</div>
-                    <div className="font-normal text-[#606969] text-[8px] md:text-[10px]">30.08.2024</div>
+
+        <div>
+          {/* Reviews Section */}
+          <div ref={reviewsRef} className="flex flex-col w-full md:w-[760px] items-start gap-5 mt-8 [font-family:'Mohave',Helvetica]">
+            <div className="self-stretch font-semibold text-heading-1 text-lg md:text-xl lg:text-2xl">Reviews</div>
+            <div className="flex items-center justify-between w-full">
+              {/* Previous Button */}
+              <img
+                className="w-6 h-6 md:w-[26.67px] md:h-[26.67px] cursor-pointer"
+                alt="Previous Review"
+                src="https://c.animaapp.com/s3bftybd/img/frame-295-1.svg"
+                onClick={handlePrevClick}
+              />
+
+              {/* Review Content */}
+              <div className="flex flex-col w-full md:w-[460px] items-start gap-5">
+                <div className="flex items-center justify-between w-full">
+                  <div className="inline-flex items-center gap-3">
+                    <div className="w-6 h-6 md:w-10 md:h-10 bg-[#ffdada] rounded-full" />
+                    <div className="flex flex-col items-start gap-[9px]">
+                      <div className="font-medium text-[#222222] text-sm md:text-base">
+                        {reviews[currentReviewIndex].name}
+                      </div>
+                      <div className="font-normal text-[#606969] text-[8px] md:text-[10px]">
+                        {reviews[currentReviewIndex].date}
+                      </div>
+                    </div>
                   </div>
+                  <img
+                    className="w-[80px] md:w-[120.29px] h-[12px] md:h-[19.65px] object-cover"
+                    alt="Rating"
+                    src={reviews[currentReviewIndex].ratingImg}
+                  />
                 </div>
-                <img className="w-[80px] md:w-[120.29px] h-[12px] md:h-[19.65px] object-cover" alt="Rating" src="https://c.animaapp.com/s3bftybd/img/pngwing-com--1--1-1@2x.png" />
+                <p className="w-full md:w-[460px] h-28 text-smallfont leading-7 font-normal text-xs md:text-base text-justify">
+                  {reviews[currentReviewIndex].reviewText}
+                </p>
               </div>
-              <p className="w-full md:w-[460px] h-28 text-smallfont leading-7 font-normal text-xs md:text-base text-justify">
-                Lörem ipsum rent intraluna saskapet, har sor. Nin spen, nis prektig fade. Astrorade inaskad polyling edor är jugt.
-              </p>
+
+              {/* Next Button */}
+              <img
+                className="w-6 h-6 md:w-[26.67px] md:h-[26.67px] cursor-pointer"
+                alt="Next Review"
+                src="https://c.animaapp.com/s3bftybd/img/frame-1-1.svg"
+                onClick={handleNextClick}
+              />
             </div>
-            <img className="w-6 h-6 md:w-[26.67px] md:h-[26.67px]" alt="Frame" src="https://c.animaapp.com/s3bftybd/img/frame-1-1.svg" />
           </div>
         </div>
+
 
         {/* Location Section */}
         <div ref={locationRef} className="flex flex-col w-full md:w-[760px] items-start gap-5 mt-8 [font-family:'Mohave',Helvetica]">
@@ -433,45 +615,38 @@ export const Details = () => {
         <div ref={faqsRef} className="flex flex-col w-full md:w-[760px] items-start gap-10 mt-8 pb-48 [font-family:'Mohave',Helvetica]">
           <div className="font-semibold text-heading-1 text-lg md:text-xl lg:text-2xl leading-[normal]">FAQs</div>
           <div className="gap-5 flex flex-col items-start w-full">
-            <div className="gap-6 flex flex-col items-start w-full">
-              <div className="flex items-center justify-between w-full">
-                <p className="w-full md:w-[800px] font-medium text-[#222222] text-base md:text-lg leading-[26.1px]">Is Driver and/or House-Help accommodation available?</p>
-                <img className="w-[18.83px] h-[10.83px]" alt="Vector" src="https://c.animaapp.com/s3bftybd/img/vector-4.svg" />
-              </div>
-              <img className="w-full md:w-[760px] h-px object-cover" alt="Line" src="https://c.animaapp.com/s3bftybd/img/line-3.svg" />
-            </div>
-            <div className="gap-6 flex flex-col items-start w-full">
-              <div className="flex items-center justify-between w-full">
-                <p className="w-full md:w-[800px] font-medium text-[#222222] text-base md:text-lg leading-[26.1px]">Is there separate accommodation for domestic help?</p>
-                <img className="w-[18.83px] h-[10.83px]" alt="Vector" src="https://c.animaapp.com/s3bftybd/img/vector-4.svg" />
-              </div>
-              <img className="w-full md:w-[760px] h-px object-cover" alt="Line" src="https://c.animaapp.com/s3bftybd/img/line-3.svg" />
-            </div>
-            <div className="flex flex-col items-start gap-[25px] w-full">
-              <div className="flex flex-col items-start gap-3 w-full">
-                <div className="flex items-center justify-between w-full">
-                  <p className="w-full md:w-[800px] font-medium text-[#222222] text-base md:text-lg leading-[26.1px]">Is parking available onsite or nearby? Is it chargeable or free?</p>
-                  <img className="w-[18.83px] h-[10.83px]" alt="Vector" src="https://c.animaapp.com/s3bftybd/img/vector-3.svg" />
+            {[
+              { question: "Is Driver and/or House-Help accommodation available?", answer: "Yes, accommodation is available for drivers and house-help." },
+              { question: "Is there separate accommodation for domestic help?", answer: "Yes, separate accommodation is provided for domestic help." },
+              { question: "Is parking available onsite or nearby? Is it chargeable or free?", answer: "Yes, our tour packages to Ooty are designed to provide a comfortable and enjoyable experience. Depending on the package you choose, breakfast may be included at your accommodation. Please check the details of each package for specific inclusions." },
+              { question: "Is the villa suitable for a day picnic?", answer: "Yes, the villa is suitable for a day picnic with prior arrangements." }
+            ].map((faq, index) => (
+              <div key={index} className="gap-6 flex flex-col items-start w-full">
+                <div
+                  className="flex items-center justify-between w-full cursor-pointer"
+                  onClick={() => toggleFaq(index)}
+                >
+                  <p className="w-full md:w-[800px] font-medium text-[#222222] text-base md:text-lg leading-[26.1px]">
+                    {faq.question}
+                  </p>
+                  <img
+                    className={`w-[18.83px] h-[10.83px] transition-transform duration-300 ${openFaq === index ? 'rotate-180' : 'rotate-0'}`}
+                    alt="Toggle Icon"
+                    src="https://c.animaapp.com/s3bftybd/img/vector-4.svg"
+                  />
                 </div>
-                <p className="w-full md:w-[760px] font-normal text-smallfont text-xs md:text-base text-justify leading-[26px] [font-family:'Mohave',Helvetica]">
-                  Yes, our tour packages to Ooty are designed to provide a comfortable and enjoyable experience.
-                  Depending on the package you choose, breakfast may be included at your accommodation. Please check the
-                  details of each package for specific inclusions.
-                </p>
+                {openFaq === index && (
+                  <p className="w-full md:w-[760px] font-normal text-smallfont text-xs md:text-base text-justify leading-[26px] mt-2">
+                    {faq.answer}
+                  </p>
+                )}
+                <img className="w-full md:w-[760px] h-px object-cover" alt="Line" src="https://c.animaapp.com/s3bftybd/img/line-3.svg" />
               </div>
-              <img className="w-full md:w-[760px] h-px object-cover" alt="Line" src="https://c.animaapp.com/s3bftybd/img/line-3.svg" />
-            </div>
-            <div className="gap-6 flex flex-col items-start w-full">
-              <div className="flex items-center justify-between w-full">
-                <p className="w-full md:w-[800px] font-medium text-[#222222] text-base md:text-lg leading-[26.1px]">Is the villa suitable for a day picnic?</p>
-                <img className="w-[18.83px] h-[10.83px]" alt="Vector" src="https://c.animaapp.com/s3bftybd/img/vector-4.svg" />
-              </div>
-              <img className="w-full md:w-[760px] h-px object-cover" alt="Line" src="https://c.animaapp.com/s3bftybd/img/line-3.svg" />
-            </div>
+            ))}
           </div>
         </div>
       </div>
-     
+
       {/* Footer Section */}
       <div className="w-full bg-primary-1 py-10 flex justify-center mt-auto [font-family:'Mohave',Helvetica]">
         <div className="w-full max-w-[1440px] px-4 md:px-[100px]">

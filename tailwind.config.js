@@ -10,6 +10,9 @@ module.exports = {
         "secondary-2": "var(--secondary-2)",
         smallfont: "var(--smallfont)",
       },
+      minHeight: {
+        'screen-75': '75vh', // Custom class for min-height 75vh
+      },
     },
   },
   plugins: [],
